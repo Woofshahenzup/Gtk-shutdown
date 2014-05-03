@@ -1,0 +1,112 @@
+#!/bin/sh
+#Wrapper for gtkdialog to use gtk2desklet
+
+#Copyright 2011 Akash Rawal
+
+#GNU General Public License 3 (http://www.gnu.org/licenses/gpl.html)
+
+#Functions
+function refresh_gtk_theme()
+{
+	kill -s USR1 $GTK2_DESKLET_PID
+}
+export -f refresh_gtk_theme
+
+function build_gtkdialog_args()
+{
+	for i in `seq 0 $(( $gtkdialog_argc-1 ))`; do
+		echo -ne "'${gtkdialog_argv[$i]}' "
+	done
+}
+
+#Read arguments
+gtkdialog_argc=0
+gtkdialog_argv=""
+debugging=""
+bgimage=""
+bgimage_stretch="FALSE"
+gtkdialog_cmd=""
+extra_tags=""
+gtkrc_files=""
+info_file=""
+exitstatus=0
+
+export -n DISABLE_TRANSPARENCY
+export -n DISABLE_RGBA_TRANS
+export -n DESKLET_GTKRC_FILES
+
+argf=""
+for i in `seq 1 $#`; do
+	eval "arg=\"\$$i\""
+	eval "narg=\"\$$(( $i+1 ))\""
+	if test -n "$argf"; then
+		argf=""
+		continue
+	fi
+	case "$arg" in
+	-t|--disable-transparency)
+		export DISABLE_TRANSPARENCY="1"
+		export DISABLE_RGBA_TRANS="1"
+		;;
+	--gtkrc-file=*)
+		gtkrc_files="${gtkrc_files}`test -n "$gtkrc_files" && echo "|"`${arg#*=}"
+		;;
+	-g)
+		gtkdialog_cmd="$narg"
+		argf="c"
+		;;
+	--gtkdialog=*)
+		echo "gtkdialog_cmd='${arg#*=}'"
+		;;
+	-\?|-h|--help)
+		echo "Usage:
+  $0 [options]
+  
+Depreciated compatiblity wrapper for gtkdialog to use gtk2desklet
+(Warnining: will be removed in next major release. Instead call gtkdialog
+directly)
+
+Options:
+  -t, --disable-transparency      Disable transparency simulation.
+      --gtkrc-file=file           Add a gtkrc file to parse without affecting
+                                  subprocesses.
+  -g, --gtkdialog=command         Use command to start gtkdialog.
+  -?, -h, --help                  Display this help and exit.
+  -v, --version                   Display version number and exit.
+
+Any unrecognised argument is passed on to gtkdialog.
+"
+		exit
+		;;
+	-v|--version)
+		echo "3.0"
+		exit
+		;;
+	*)
+		gtkdialog_argv[gtkdialog_argc]="$arg"
+		gtkdialog_argc=$(( $gtkdialog_argc+1 ))
+		;;
+	esac
+done
+
+#v3.0: GTK's rc files
+export DESKLET_GTKRC_FILES="$gtkrc_files"
+
+#Find gtkdialog
+if test -z "$gtkdialog_cmd"; then
+	if test -n "`which gtkdialog4`"; then
+		gtkdialog_cmd="gtkdialog4"
+	elif test -n "`which gtkdialog`"; then
+		gtkdialog_cmd="gtkdialog3"
+	elif test -n "`which gtkdialog3`"; then
+		gtkdialog_cmd="gtkdialog3"
+	else
+		echo "ERROR: gtkdialog not found. Aborting" >> /dev/stderr
+		quit_s 1
+	fi
+fi
+
+#Now launch...
+eval  "$gtkdialog_cmd --gtk-module=\"gtk2desklet\" `build_gtkdialog_args`"
+
+

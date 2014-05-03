@@ -1,0 +1,2 @@
+#!/bin/sh
+cp -fT ./libgtk2desklet.so /usr/lib/gtk-2.0/modules/libgtk2desklet.so

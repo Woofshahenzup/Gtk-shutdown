@@ -1,0 +1,53 @@
+#!/bin/sh
+# Made by KuLuSz from the puppy-icon-switcher (thankyou editors/authors)
+
+export TEXTDOMAIN=gtk-shutdown
+export OUTPUT_CHARSET=UTF-8
+
+ICONSETSGUI=""
+for ONEDIR in `find /usr/share/ob-logout-menu/themes -mindepth 1 -maxdepth 1 -type d | tr '\n' ' '`
+do
+ ONENAME="`basename $ONEDIR`"
+  [ -f $ONEDIR/oblogout/logout.png ] && ln -s $ONEDIR/oblogout/logout.png /usr/share/ob-logout-menu/tmp/tmp-${ONENAME}-logout.png
+  [ -f $ONEDIR/oblogout/restart.png ] && ln -s $ONEDIR/oblogout/restart.png /usr/share/ob-logout-menu/tmp/tmp-${ONENAME}-restart.png
+  [ -f $ONEDIR/oblogout/shutdown.png ] && ln -s $ONEDIR/oblogout/shutdown.png /usr/share/ob-logout-menu/tmp/tmp-${ONENAME}-shutdown.png
+  [ -f $ONEDIR/oblogout/lock.png ] && ln -s $ONEDIR/oblogout/lock.png /usr/share/ob-logout-menu/tmp/tmp-${ONENAME}-lock.png
+ ICONSETSGUI="$ICONSETSGUI
+ <hbox>
+  <pixmap><input file>/usr/share/ob-logout-menu/tmp/tmp-${ONENAME}-logout.png</input></pixmap>
+  <pixmap><input file>/usr/share/ob-logout-menu/tmp/tmp-${ONENAME}-restart.png</input></pixmap>
+  <pixmap><input file>/usr/share/ob-logout-menu/tmp/tmp-${ONENAME}-shutdown.png</input></pixmap>
+  <pixmap><input file>/usr/share/ob-logout-menu/tmp/tmp-${ONENAME}-lock.png</input><height>64</height><width>64</width></pixmap>
+  <vbox>
+   <button><label>${ONENAME}</label></button>
+  </vbox>
+ </hbox>
+"
+
+done
+
+export OBIS="
+<window title=\"$(gettext 'GTK shutdown icon theme setter')\" icon-name=\"gtk-convert\">
+ <vbox>
+  <text><label>$(gettext 'Choose the icon-set for GTK shutdown gui')</label></text>
+
+  ${ICONSETSGUI}
+  
+  <hbox>
+   <button><input file stock=\"gtk-quit\"></input><label>$(gettext 'QUIT')</label></button>
+  </hbox>
+ </vbox>
+</window>"
+
+echo "$OBIS" > /tmp/OBIS
+#echo "$ICONSWITCHGUI" | gtkdialog3 --stdin
+RETSTUFF="`gtkdialog3 --program=OBIS`"
+
+eval "$RETSTUFF"
+
+if [ "$EXIT" != "" ];then
+ ln -sf /usr/share/ob-logout-menu/themes/${EXIT}/oblogout/* /usr/share/ob-logout-menu/current_theme/ && rm -f /usr/share/ob-logout-menu/tmp/* & /usr/bin/gtk-shutdown &
+fi
+
+
+###& /usr/bin/gtk-shutdown &

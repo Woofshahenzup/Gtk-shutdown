@@ -1,0 +1,82 @@
+
+					  Gtk2Desklet User Manual 3.1
+					  ***************************
+
+1. Introduction
+^^^^^^^^^^^^^^^
+This is a GTK module, which can turn many GTK based programs into a desktop
+app. It is likely that the module may not succeed. Till now, I confirm
+gtkdialog, sylpheed, gcolor2, leafpad, Xdialog and thunar to be working.
+
+The module may not work with:
+1.	Programs that don't call gtk_init() before any option processing
+2.	Programs that perform drawing operations assuming the default depth of the
+	window (gtk2desklet may re-realize the window with another depth)
+3.	Programs with more than one window or splash screens
+4.	Programs that are actually wrapper scripts to actual programs
+5.	Programs that don't use GTK (obviously) 
+
+2. Getting started
+^^^^^^^^^^^^^^^^^^
+You make the target program load the module by just passing an extra argument
+to the program:
+
+		--gtk-module=gtk2desklet
+
+Hopefully, if the program is structured properly, the program's window
+will appear on the desktop, transparent, and without borders.
+
+Here's a very simple example:
+
+		#!/bin/bash
+		
+		export desklet="
+		<window>
+			<vbox> 
+				<text><label>The first example app</label></text> 
+				<text><label>Hello World!</label></text> 
+				<button ok></button>
+			</vbox>
+		</window>
+		"
+
+		gtkdialog3 -p desklet --gtk-module=gtk2desklet
+
+3. Compatiblity wrapper
+^^^^^^^^^^^^^^^^^^^^^^^
+In order to be compatible with older gtkdialog-desklet, gtk2desklet includes
+a wrapper, gtkdialog-desklet.
+
+This wrapper will be removed in next major release. Instead call gtkdialog
+directly, with extra argument --gtk-module=gtk2desklet
+
+4. Environment variables
+^^^^^^^^^^^^^^^^^^^^^^^^
+DISABLE_TRANSPARENCY
+	Declare this variable with any value, and gtk2desklet will not make the
+	program transparent.
+	
+DISABLE_RGBA_TRANS
+	Declare this variable with any value, and gtk2desklet will not use true
+	transparency. This may fix crashing problem with a few programs, but at
+	cost of some performance.
+	
+DESKLET_GTKRC_FILES
+	This variable can contain extra GTK resource files (many people call these
+	theme files) without affecting any subprocesses. File names are separated
+	by a pipe character '|'.
+	
+GTK2_DESKLET_PID
+	This variable is set by gtk2desklet module. This contains process ID
+	of the program.
+
+5. Refreshing GTK theme
+^^^^^^^^^^^^^^^^^^^^^^^
+This is very easy. One just has to send SIGUSR1 signal to the program.
+In shell, this can be done something like this:
+
+		kill -s USR1 <process-id>
+
+gtkdialog-desklet wrapper contains an exported function for this:
+refresh_gtk_theme. It takes no arguments.
+

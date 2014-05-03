@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=GTK shutdown icon config
+Name[hu]=GTK leállító ikon beállítása
+Name[es]=Selector de iconos de GTK shutdown
+Icon=gtk-preferences
+Comment=GTK shutdown gui
+Comment[es]=Gui para GTK shutdown
+Exec=gtk-shutdown-config
+Terminal=false
+Type=Application
+Categories=X-DesktopApplets
+GenericName=GTK shutdown gui

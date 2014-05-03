@@ -1,0 +1,29 @@
+#!/bin/sh
+function compile()
+{
+	export OBJNAME="${1%.*}"
+	export SRCNAME="$1"
+	eval "`cat "$1" | head -n 1 | cut -c 3-`"
+	echo "
+===============================================================================
+Exitcode=$?"
+	sleep 1000d
+}
+export -f compile
+function create_a_list()
+{
+	ls . | grep ".c" |
+	while read file; do
+		echo "<button><label>$file</label><action>rxvt -e bash -c \"compile '$file'\" </action></button>"
+	done
+}
+export dialog="
+<window title=\"Compile a file\">
+<vbox>
+<text use-markup=\"true\"><label>\"<b>Select a file to compile:</b>\"</label></text>
+`create_a_list`
+<button use-stock=\"true\" label=\"gtk-close\"></button>
+</vbox>
+</window>"
+
+gtkdialog3 -p dialog -c
