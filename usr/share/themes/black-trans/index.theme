@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Black
+Type=X-GNOME-Metatheme
+Comment=Simple and elegant. Version 1.5
+Encoding=UTF-8
+
+[X-GNOME-Metatheme]
+GtkTheme=Black
+MetacityTheme=Black
+IconTheme=Tango

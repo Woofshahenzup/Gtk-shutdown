@@ -5,7 +5,7 @@
 # josejp2424  add tooltips instead text 23-03-2014
 export TEXTDOMAIN=gtk-shutdown
 export OUTPUT_CHARSET=UTF-8
-
+export GTK2_RC_FILES=/usr/share/themes/black-trans/gtk-2.0/gtkrc:/root/.gtkrc-2.0
 export shutdown='
 <window title="'$(gettext 'GTK shutdown')'" icon-name="gtk-preferences">
 
