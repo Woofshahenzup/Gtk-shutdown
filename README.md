@@ -13,3 +13,5 @@ una sencilla interfaz de apagado.
 [gtk2desklet-3.1.pet](https://copy.com/uwpbs1YuusfV)
 
 [gtk_shutdown_pupjibaro-0.1.pet](https://copy.com/tkB04mQokrKp)
+
+[gtk_shutdown_pupjibaro-0.2.pet](https://copy.com/lHgnMr7yxEiu) MD5SUM c0cbb9cc2522257c7b7136ca15b89d42
